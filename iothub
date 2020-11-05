@@ -1,0 +1,13 @@
+az extension add --name azure-cli-iot-ext
+az group create --name practica --location eastus2
+az vm image accept-terms --urn microsoft_iot_edge:iot_edge_vm_ubuntu:ubuntu_1604_edgeruntimeonly:latest
+az vm create --resource-group practica --name MVpracticaiot --image microsoft_iot_edge:iot_edge_vm_ubuntu:ubuntu_1604_edgeruntimeonly:latest --admin-username azureuser --generate-ssh-key
+az iot hub create --resource-group practica --name IOTHUB --sku S1
+az iot hub device-identity create --hub-name IOTHUB --device-id DISPOSITIVO --edge-enabled
+az iot hub device-identity show-connection-string --device-id DISPOSITIVO --hub-name IOTHUB
+az vm run-command invoke -g practica -n MVpracticaiot --command-id RunShellScript --script "/etc/iotedge/configedge.sh 'TU_CONECTION_STRING'"
+ssh azureuser@52.254.71.80
+sudo systemctl status iotedge
+journalctl -u iotedge
+sudo iotedge list
+sudo iotedge logs SimulatedTemperatureSensor -f
